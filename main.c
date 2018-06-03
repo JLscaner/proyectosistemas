@@ -279,6 +279,7 @@ void rx_msj_UART0(uint32_t long_buffer, char msj[]){
     char c;
     while((c = rxcar_uart0())!='\r'){
         if(i<(long_buffer-1)){
+           txcar_uart0(c);
            msj[i] = c;
            i++;
         }
