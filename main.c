@@ -226,11 +226,6 @@ void ftoa(float n, char *res, int afterpoint)
 /////////////////////////////////////////////////////////////
 
 
-
-
-
-
-
 void ConfiguraUART0(void){
 // Habilitamos reloj para el UART0
 SYSCTL_RCGC1_R |= SYSCTL_RCGC1_UART0;
@@ -263,22 +258,32 @@ UART0_DR_R = car;
 
 
 /*Función para la recepción de un carácter de 8 bits*/
-uint8_t rxcar_uart0(void){
-uint8_t temp;
+char rxcar_uart0(void){
+char temp;
 while ((UART0_FR_R & UART_FR_RXFE)!=0); // Se espera que llegue un dato
 temp= UART0_DR_R&0xFF; // Se toman solo 8 bits
 return temp;
 }
 
 /*Funcion para el envio de una cadena*/
-void txmens_uart0(char mens[]){
-char letra;
+void txmens_uart0(char msj[]){
 uint8_t i=0;
-letra= mens[i++];
-while (letra != '\0'){ //Se envían todos los caracteres hasta el fin de cadena
-txcar_uart0(letra);
-letra= mens[i++];
+   while (msj[i] != '\0'){ //Se envían todos los caracteres hasta el fin de cadena
+   txcar_uart0(msj[i]);
+   i++;
+   }
 }
+
+void rx_msj_UART0(uint32_t long_buffer, char msj[]){
+    uint32_t i = 0;
+    char c;
+    while((c = rxcar_uart0())!='\r'){
+        if(i<(long_buffer-1)){
+           msj[i] = c;
+           i++;
+        }
+    }
+    msj[i]=0x00;
 }
 
 
